@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weink1 Profile</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #0f0f0f);
+            color: var(--tg-theme-text-color, #ffffff);
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .profile-card {
+            background: var(--tg-theme-secondary-bg-color, #1e1e1e);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #ff0050;
+            background: linear-gradient(45deg, #ff0050, #ff4081);
+        }
+        
+        .username {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #ff0050, #ff4081);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .bio {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .link-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: var(--tg-theme-button-color, #ff0050);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            padding: 16px 20px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 16px;
+            box-shadow: 0 4px 16px rgba(255, 0, 80, 0.3);
+        }
+        
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 80, 0.4);
+        }
+        
+        .link-button.tt {
+            background: linear-gradient(45deg, #000000, #ff0050);
+            color: white;
+        }
+        
+        .link-button.tg {
+            background: linear-gradient(45deg, #0088cc, #00a8ff);
+        }
+        
+        .link-button.email {
+            background: linear-gradient(45deg, #ea4335, #fbbc05);
+        }
+        
+        .link-icon {
+            font-size: 1.3rem;
+        }
+        
+        .tg-button {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 16px 20px;
+            border-radius: 14px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .tg-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-card">
+            <div class="avatar"></div>
+            <div class="username">@weink1</div>
+            <div class="bio">бессмертный</div>
+            <div class="stats">
+                <span class="stat">❤️ 77.4K</span>
+                <span class="stat">👥 671</span>
+                <span class="stat">👀 1.5M</span>
+            </div>
+        </div>
+        
+        <div class="links-container">
+            <a href="https://www.tiktok.com/@weink1" class="link-button tt" target="_blank">
+                <span class="link-icon">🎵</span>
+                TikTok - @weink1
+            </a>
+            
+            <a href="https://t.me/weink1" class="link-button tg" target="_blank">
+                <span class="link-icon">💼</span>
+                Сотрудничество
+            </a>
+            
+            <a href="https://t.me/weink1" class="link-button tg" target="_blank">
+                <span class="link-icon">✉️</span>
+                Написать сообщение
+            </a>
+        </div>
+
+        <button class="tg-button" onclick="showAlert()">
+            👋 Приветствие
+        </button>
+        
+        <div class="footer">
+            © 2024 @weink1 · Все права защищены
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        // Расширяем на весь экран
+        tg.expand();
+        
+        // Получаем данные пользователя Telegram
+        const user = tg.initDataUnsafe?.user;
+        
+        // Заполняем профиль данными из Telegram
+        if (user) {
+            const usernameElement = document.querySelector('.username');
+            const bioElement = document.querySelector('.bio');
+            
+            // Если у пользователя есть фото, устанавливаем его
+            if (user.photo_url) {
+                document.querySelector('.avatar').style.backgroundImage = `url(${user.photo_url})`;
+                document.querySelector('.avatar').style.backgroundSize = 'cover';
+                document.querySelector('.avatar').style.backgroundPosition = 'center';
+            }
+            
+            // Добавляем информацию о пользователе Telegram
+            bioElement.innerHTML += `<br><small>Привет, ${user.first_name}! 👋</small>`;
+        }
+        
+        // Функция для показа уведомления
+        function showAlert() {
+            tg.showAlert('Добро пожаловать в мой профиль! 🎵');
+        }
+        
+        // Анимация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.profile-card, .link-button, .tg-button');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+        
+        // Аналитика просмотров (имитация)
+        let views = localStorage.getItem('weink1_views') || 0;
+        views = parseInt(views) + 1;
+        localStorage.setItem('weink1_views', views);
+        
+        console.log('Профиль @weink1 загружен! Просмотров:', views);
+    </script>
+</body>
+</html>
