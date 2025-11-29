@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подслушано Металлострой - Игра</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3c6c, #3a4c6c);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .rainbow-text {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #0000ff, #8000ff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow 5s ease infinite, pulse 2s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            margin: 10px 0;
+            padding: 10px;
+        }
+        
+        .game-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff8a00, #e52e71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .profile-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info .level {
+            font-size: 0.9rem;
+            color: #ffcc00;
+        }
+        
+        .money-section {
+            text-align: right;
+        }
+        
+        .money {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .money:active {
+            transform: scale(1.1);
+        }
+        
+        .money-per-second {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .click-area {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .coin {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 30% 30%, #ffcc00, #ff9900);
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #996600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s;
+            user-select: none;
+        }
+        
+        .coin:active {
+            transform: scale(0.95);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat.hunger .stat-value {
+            color: #ff6666;
+        }
+        
+        .stat.health .stat-value {
+            color: #66ff66;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        
+        .hunger .progress-fill {
+            background: #ff6666;
+        }
+        
+        .health .progress-fill {
+            background: #66ff66;
+        }
+        
+        .upgrades {
+            margin-top: 30px;
+        }
+        
+        .upgrades h3 {
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ffcc00;
+        }
+        
+        .upgrade-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .upgrade-item:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .upgrade-info {
+            flex: 1;
+        }
+        
+        .upgrade-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .upgrade-description {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .upgrade-cost {
+            color: #ffcc00;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .buy-button {
+            background: linear-gradient(135deg, #00cc66, #00994d);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .buy-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .buy-button:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            display: block;
+            animation: fadeInOut 3s ease;
+        }
+        
+        .food-shop {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .food-shop h3 {
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-align: center;
+        }
+        
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .food-item:last-child {
+            border-bottom: none;
+        }
+        
+        .food-name {
+            flex: 1;
+        }
+        
+        .food-effect {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-right: 15px;
+        }
+        
+        .food-cost {
+            color: #ffcc00;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        @media (max-width: 600px) {
+            .rainbow-text {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            .stat {
+                margin: 5px 0;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .money-section {
+                text-align: left;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="rainbow-text">Подслушано Металлострой</div>
+        </div>
+        
+        <div class="game-section">
+            <div class="game-header">
+                <div class="profile">
+                    <div class="profile-img">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="playerName">Житель Металлостроя</h3>
+                        <div class="level" id="playerLevel">Уровень: Бомж</div>
+                    </div>
+                </div>
+                <div class="money-section">
+                    <div class="money" id="moneyDisplay">0 М</div>
+                    <div class="money-per-second" id="moneyPerSecond">+0 М/сек</div>
+                </div>
+            </div>
+            
+            <div class="click-area">
+                <div class="coin" id="clickCoin">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <p>Кликай для заработка!</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat hunger">
+                    <div class="stat-label">Голод</div>
+                    <div class="stat-value" id="hungerValue">100%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="hungerBar" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="stat health">
+                    <div class="stat-label">Здоровье</div>
+                    <div class="stat-value" id="healthValue">100%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="healthBar" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="food-shop">
+                <h3>Магазин еды</h3>
+                <div class="food-item">
+                    <div class="food-name">Хлеб</div>
+                    <div class="food-effect">+10% голода</div>
+                    <div class="food-cost">10 М</div>
+                    <button class="buy-button" onclick="buyFood('bread')">Купить</button>
+                </div>
+                <div class="food-item">
+                    <div class="food-name">Суп</div>
+                    <div class="food-effect">+25% голода</div>
+                    <div class="food-cost">25 М</div>
+                    <button class="buy-button" onclick="buyFood('soup')">Купить</button>
+                </div>
+                <div class="food-item">
+                    <div class="food-name">Мясо</div>
+                    <div class="food-effect">+50% голода</div>
+                    <div class="food-cost">50 М</div>
+                    <button class="buy-button" onclick="buyFood('meat')">Купить</button>
+                </div>
+            </div>
+            
+            <div class="upgrades">
+                <h3>Мини-акции</h3>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Акции завода</div>
+                        <div class="upgrade-description">Пассивный доход: 1 М/сек</div>
+                    </div>
+                    <div class="upgrade-cost" id="factoryCost">100 М</div>
+                    <button class="buy-button" id="factoryButton" onclick="buyUpgrade('factory')">Купить</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Инвестиции в недвижимость</div>
+                        <div class="upgrade-description">Пассивный доход: 5 М/сек</div>
+                    </div>
+                    <div class="upgrade-cost" id="estateCost">500 М</div>
+                    <button class="buy-button" id="estateButton" onclick="buyUpgrade('estate')">Купить</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">Бизнес в ДК Маяковского</div>
+                        <div class="upgrade-description">Пассивный доход: 10 М/сек</div>
+                    </div>
+                    <div class="upgrade-cost" id="businessCost">1000 М</div>
+                    <button class="buy-button" id="businessButton" onclick="buyUpgrade('business')">Купить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Игровые переменные
+        let money = 0;
+        let moneyPerSecond = 0;
+        let hunger = 100;
+        let health = 100;
+        let level = 1;
+        let levelNames = ["Бомж", "Человек", "Вор", "Бизнесмен", "Мажор", "Миллионер", "Безлимитный"];
+        
+        // Обновления
+        let upgrades = {
+            factory: { cost: 100, income: 1, owned: 0 },
+            estate: { cost: 500, income: 5, owned: 0 },
+            business: { cost: 1000, income: 10, owned: 0 }
+        };
+        
+        // Элементы DOM
+        const moneyDisplay = document.getElementById('moneyDisplay');
+        const moneyPerSecondDisplay = document.getElementById('moneyPerSecond');
+        const clickCoin = document.getElementById('clickCoin');
+        const hungerValue = document.getElementById('hungerValue');
+        const healthValue = document.getElementById('healthValue');
+        const hungerBar = document.getElementById('hungerBar');
+        const healthBar = document.getElementById('healthBar');
+        const playerLevel = document.getElementById('playerLevel');
+        const notification = document.getElementById('notification');
+        
+        // Обработчики событий
+        clickCoin.addEventListener('click', addMoney);
+        
+        // Функции
+        function addMoney() {
+            money += 1;
+            updateDisplay();
+            showNotification("+1 М", "#ffcc00");
+        }
+        
+        function buyUpgrade(type) {
+            const upgrade = upgrades[type];
+            if (money >= upgrade.cost) {
+                money -= upgrade.cost;
+                upgrade.owned += 1;
+                upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                moneyPerSecond += upgrade.income;
+                updateDisplay();
+                updateUpgradeButtons();
+                showNotification(`Куплено: ${getUpgradeName(type)}`, "#00cc66");
+            } else {
+                showNotification("Недостаточно денег!", "#ff6666");
+            }
+        }
+        
+        function buyFood(type) {
+            let cost, effect;
+            
+            switch(type) {
+                case 'bread':
+                    cost = 10;
+                    effect = 10;
+                    break;
+                case 'soup':
+                    cost = 25;
+                    effect = 25;
+                    break;
+                case 'meat':
+                    cost = 50;
+                    effect = 50;
+                    break;
+            }
+            
+            if (money >= cost) {
+                money -= cost;
+                hunger = Math.min(100, hunger + effect);
+                updateDisplay();
+                showNotification(`Съедено: ${getFoodName(type)}`, "#66ff66");
+            } else {
+                showNotification("Недостаточно денег!", "#ff6666");
+            }
+        }
+        
+        function getUpgradeName(type) {
+            switch(type) {
+                case 'factory': return 'Акции завода';
+                case 'estate': return 'Инвестиции в недвижимость';
+                case 'business': return 'Бизнес в ДК Маяковского';
+            }
+        }
+        
+        function getFoodName(type) {
+            switch(type) {
+                case 'bread': return 'Хлеб';
+                case 'soup': return 'Суп';
+                case 'meat': return 'Мясо';
+            }
+        }
+        
+        function updateDisplay() {
+            moneyDisplay.textContent = `${money} М`;
+            moneyPerSecondDisplay.textContent = `+${moneyPerSecond} М/сек`;
+            hungerValue.textContent = `${hunger}%`;
+            healthValue.textContent = `${health}%`;
+            
+            // Обновление прогресс-баров
+            hungerBar.style.width = `${hunger}%`;
+            healthBar.style.width = `${health}%`;
+            
+            // Обновление уровня
+            if (money >= 1000000) level = 7;
+            else if (money >= 500000) level = 6;
+            else if (money >= 100000) level = 5;
+            else if (money >= 20000) level = 4;
+            else if (money >= 5000) level = 3;
+            else if (money >= 1000) level = 2;
+            else level = 1;
+            
+            playerLevel.textContent = `Уровень: ${levelNames[level-1]}`;
+            
+            // Обновление кнопок улучшений
+            document.getElementById('factoryCost').textContent = `${upgrades.factory.cost} М`;
+            document.getElementById('estateCost').textContent = `${upgrades.estate.cost} М`;
+            document.getElementById('businessCost').textContent = `${upgrades.business.cost} М`;
+        }
+        
+        function updateUpgradeButtons() {
+            document.getElementById('factoryButton').disabled = money < upgrades.factory.cost;
+            document.getElementById('estateButton').disabled = money < upgrades.estate.cost;
+            document.getElementById('businessButton').disabled = money < upgrades.business.cost;
+        }
+        
+        function showNotification(text, color) {
+            notification.textContent = text;
+            notification.style.background = color;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function startGameLoop() {
+            setInterval(() => {
+                // Пассивный доход
+                money += moneyPerSecond;
+                
+                // Уменьшение голода
+                hunger = Math.max(0, hunger - 1);
+                
+                // Если голод на нуле - уменьшение здоровья
+                if (hunger === 0) {
+                    health = Math.max(0, health - 5);
+                    
+                    // Если здоровье на нуле - штраф
+                    if (health === 0) {
+ // Продолжение с проверки здоровья
+if (health === 0) {
+    if (money >= 5000) {
+        money -= 5000;
+        showNotification("🏥 Вы умерли от голода! Лечение стоило 5000 М", "#ff6666");
+    } else {
+        money = Math.floor(money * 0.5);
+        showNotification("🏥 Вы умерли от голода и потеряли половину денег!", "#ff0000");
+    }
+    health = 100;
+    hunger = 50;
+}
+
+// Проверка достижений
+checkAchievements();
+
+// Случайные события
+triggerRandomEvent();
+
+// Автоматическое лечение при низком здоровье
+if (health < 30 && money >= 1000) {
+    money -= 1000;
+    health = Math.min(100, health + 50);
+    showNotification("💊 Автоматическое лечение: +50% здоровья (-1000 М)", "#ff66ff");
+}
+
+// Бонусы за уровень
+if (level >= 4 && Math.random() < 0.01) { // Бизнесмен и выше
+    const bonus = level * 100;
+    money += bonus;
+    showNotification(`🎁 Бонус уровня: +${bonus} М!`, "#00ff88");
+}
+
+updateDisplay();
+updateAllUpgradeButtons();
+
+// Обновление прогресс-баров с анимацией
+hungerBar.style.width = hunger + '%';
+healthBar.style.width = health + '%';
+
+// Изменение цвета здоровья при низких значениях
+if (health < 30) {
+    healthBar.style.background = '#ff4444';
+} else if (health < 70) {
+    healthBar.style.background = '#ffaa00';
+} else {
+    healthBar.style.background = '#66ff66';
+}
+
+// Изменение цвета голода при низких значениях
+if (hunger < 20) {
+    hungerBar.style.background = '#ff0000';
+} else if (hunger < 50) {
+    hungerBar.style.background = '#ff6666';
+} else {
+    hungerBar.style.background = '#ff6666';
+}
+}, 1000);
+}
+
+// Улучшенная функция показа уведомлений
+function showNotification(text, color) {
+    // Создаем новое уведомление вместо использования одного
+    const newNotification = document.createElement('div');
+    newNotification.className = 'notification';
+    newNotification.textContent = text;
+    newNotification.style.background = color;
+    
+    // Позиционируем последовательно
+    const notifications = document.querySelectorAll('.notification');
+    const topPosition = 20 + notifications.length * 80;
+    newNotification.style.top = topPosition + 'px';
+    
+    document.body.appendChild(newNotification);
+    
+    // Анимация появления
+    setTimeout(() => {
+        newNotification.classList.add('show');
+    }, 10);
+    
+    // Удаление через 3 секунды
+    setTimeout(() => {
+        newNotification.classList.remove('show');
+        setTimeout(() => {
+            if (newNotification.parentNode) {
+                newNotification.parentNode.removeChild(newNotification);
+            }
+        }, 500);
+    }, 3000);
+}
+
+// Расширенная система улучшений
+function buyUpgrade(type) {
+    const upgrade = upgrades[type];
+    if (!upgrade) return;
+    
+    if (money >= upgrade.cost) {
+        money -= upgrade.cost;
+        upgrade.owned += 1;
+        upgrade.cost = Math.floor(upgrade.cost * 1.5);
+        moneyPerSecond += upgrade.income;
+        
+        // Визуальный эффект покупки
+        const button = document.getElementById(type + 'Button');
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 150);
+        
+        updateDisplay();
+        updateAllUpgradeButtons();
+        showNotification(`✅ Куплено: ${getUpgradeName(type)} (+${upgrade.income} М/сек)`, "#00cc66");
+        
+        // Специальные эффекты для определенных улучшений
+        if (type === 'metallostroyBusiness') {
+            showNotification("🏭 Поздравляем! Теперь вы владелец завода в Металлострое!", "#ffcc00");
+        }
+        
+    } else {
+        // Эффект тряски при недостатке денег
+        const button = document.getElementById(type + 'Button');
+        button.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+            button.style.animation = '';
+        }, 500);
+        showNotification("❌ Недостаточно денег!", "#ff4444");
+    }
+}
+
+// Добавляем анимацию тряски в CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .notification {
+        transition: all 0.5s ease;
+    }
+    
+    .coin {
+        cursor: pointer;
+        user-select: none;
+    }
+    
+    .coin:active {
+        animation: coinClick 0.2s;
+    }
+    
+    @keyframes coinClick {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.9); }
+        100% { transform: scale(1); }
+    }
+`;
+document.head.appendChild(style);
+
+// Улучшенная функция клика по монете
+function addMoney() {
+    money += 1;
+    
+    // Создаем летящую цифру
+    const flyingText = document.createElement('div');
+    flyingText.textContent = '+1 М';
+    flyingText.style.position = 'absolute';
+    flyingText.style.color = '#ffcc00';
+    flyingText.style.fontWeight = 'bold';
+    flyingText.style.fontSize = '1.2rem';
+    flyingText.style.pointerEvents = 'none';
+    flyingText.style.zIndex = '1000';
+    
+    // Позиционируем относительно монеты
+    const coinRect = clickCoin.getBoundingClientRect();
+    flyingText.style.left = (coinRect.left + coinRect.width / 2) + 'px';
+    flyingText.style.top = (coinRect.top + coinRect.height / 2) + 'px';
+    
+    document.body.appendChild(flyingText);
+    
+    // Анимация полета текста
+    flyingText.animate([
+        { transform: 'translateY(0)', opacity: 1 },
+        { transform: 'translateY(-50px)', opacity: 0 }
+    ], {
+        duration: 1000,
+        easing: 'ease-out'
+    });
+    
+    // Удаляем элемент после анимации
+    setTimeout(() => {
+        if (flyingText.parentNode) {
+            flyingText.parentNode.removeChild(flyingText);
+        }
+    }, 1000);
+    
+    updateDisplay();
+    
+    // Периодическое уведомление о кликах
+    clickCount = (clickCount || 0) + 1;
+    if (clickCount % 50 === 0) {
+        showNotification(`🎯 ${clickCount} кликов! Продолжайте в том же духе!`, "#8844ff");
+    }
+}
+
+// Система комбо за быстрые клики
+let lastClickTime = 0;
+let combo = 0;
+
+function addMoneyWithCombo() {
+    const now = Date.now();
+    const timeDiff = now - lastClickTime;
+    
+    if (timeDiff < 300) { // Комбо если клики быстрее 300ms
+        combo++;
+        money += 1 + Math.floor(combo / 5); // Бонус за комбо
+        
+        if (combo % 10 === 0) {
+            showNotification(`🔥 Комбо x${combo}! +${1 + Math.floor(combo / 5)} М`, "#ff4444");
+        }
+    } else {
+        combo = 0;
+        money += 1;
+    }
+    
+    lastClickTime = now;
+    updateDisplay();
+}
+
+// Обновляем обработчик клика
+clickCoin.addEventListener('click', addMoneyWithCombo);
+
+// Функция авто-кликера (разблокируется на высоких уровнях)
+let autoClicker = {
+    enabled: false,
+    rate: 0,
+    cost: 50000
+};
+
+function buyAutoClicker() {
+    if (money >= autoClicker.cost && level >= 5) {
+        money -= autoClicker.cost;
+        autoClicker.enabled = true;
+        autoClicker.rate = 5;
+        autoClicker.cost *= 2;
+        
+        showNotification("🤖 Авто-кликер активирован! +5 кликов/сек", "#00ccff");
+        
+        // Запускаем авто-кликер
+        setInterval(() => {
+            if (autoClicker.enabled) {
+                money += autoClicker.rate;
+                updateDisplay();
+            }
+        }, 1000);
+    } else if (level < 5) {
+        showNotification("🔒 Авто-кликер доступен с уровня Мажор", "#ffaa00");
+    } else {
+        showNotification("❌ Недостаточно денег для авто-кликера", "#ff4444");
+    }
+}
+
+// Добавляем кнопку авто-кликера в интерфейс
+function addAutoClickerButton() {
+    const upgradesContainer = document.querySelector('.upgrades');
+    const autoClickerItem = document.createElement('div');
+    autoClickerItem.className = 'upgrade-item';
+    autoClickerItem.innerHTML = `
+        <div class="upgrade-info">
+            <div class="upgrade-name">🤖 Авто-кликер</div>
+            <div class="upgrade-description">Автоматические клики: +5/сек</div>
+        </div>
+        <div class="upgrade-cost" id="autoClickerCost">${autoClicker.cost} М</div>
+        <button class="buy-button" id="autoClickerButton" onclick="buyAutoClicker()">
+            ${level >= 5 ? 'Купить' : '🔒 Ур. 5'}
+        </button>
+    `;
+    upgradesContainer.appendChild(autoClickerItem);
+}
+
+// Инициализация расширенной игры
+function initEnhancedGame() {
+    addInterfaceButtons();
+    addNewUpgrades();
+    addAutoClickerButton();
+    loadGame();
+    enhancedGameLoop();
+    
+    // Показываем приветственное сообщение
+    setTimeout(() => {
+        showNotification("🎮 Добро пожаловать в игру 'Житель Металлостроя'!", "#8844ff");
+        showNotification("💡 Кликайте по монете для заработка!", "#ffcc00");
+        showNotification("🏠 Покупайте улучшения для пассивного дохода!", "#00cc66");
+    }, 1000);
+    
+    // Периодические подсказки
+    setInterval(() => {
+        const tips = [
+            "💡 Не забывайте покупать еду!",
+            "💡 Улучшения приносят пассивный доход",
+            "💡 Следите за уровнем голода",
+            "💡 Сохраняйте игру регулярно",
+            "💡 Попробуйте мини-игру для быстрого заработка"
+        ];
+        if (Math.random() < 0.3) { // 30% шанс показать подсказку
+            showNotification(tips[Math.floor(Math.random() * tips.length)], "#44aaff");
+        }
+    }, 30000);
+}
+
+// Запускаем улучшенную игру
+updateDisplay();
+updateAllUpgradeButtons();
+initEnhancedGame();                       
